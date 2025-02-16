@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <algorithm>
 #include <queue>
+#include <d2d1.h>
 using namespace std;
 
 string longestDiverseString(int a, int b, int c) {
