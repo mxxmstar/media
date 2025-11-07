@@ -1,0 +1,14 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+exec_prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+libdir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib
+includedir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/include
+
+Name: FreeType 2
+URL: https://freetype.org
+Description: A free, high-quality, and portable font engine.
+Version: 26.2.20
+Requires: zlib, libpng, harfbuzz >= 2.0.0, libbrotlidec
+Requires.private: 
+Libs: -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lfreetype 
+Libs.private: 
+Cflags: -I${includedir}/freetype2

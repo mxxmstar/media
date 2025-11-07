@@ -1,0 +1,11 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+lv2dir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib/lv2
+plugindir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib/lv2
+
+Name: LV2
+Description: Plugin standard for audio systems
+Version: 1.18.10
+Cflags: -I${includedir}

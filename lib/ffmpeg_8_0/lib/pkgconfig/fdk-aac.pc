@@ -1,0 +1,11 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Fraunhofer FDK AAC Codec Library
+Description: AAC codec library
+Version: 2.0.3
+Libs: -L${libdir} -lfdk-aac -lm 
+Libs.private: 
+Cflags: -I${includedir}

@@ -1,0 +1,14 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+exec_prefix=${prefix}
+libdir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib
+includedir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/include
+
+Name: libavutil
+Description: FFmpeg utility library
+Version: 60.8.100
+Requires: 
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavutil -L/usr/lib/x86_64-linux-gnu -lva-drm -lva -L/usr/lib/x86_64-linux-gnu -lva-x11 -lva -lvdpau -lX11 -lm -L/usr/lib/x86_64-linux-gnu -ldrm -lm -lOpenCL -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lssl -lcrypto -lz -ldl -pthread -L/usr/lib/x86_64-linux-gnu -lva -latomic -pthread -L/usr/lib/x86_64-linux-gnu -lX11 -lpthread -lxcb -lXau -lXdmcp
+Libs.private: 
+Cflags: -I${includedir}

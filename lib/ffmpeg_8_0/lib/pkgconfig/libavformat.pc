@@ -1,0 +1,14 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+exec_prefix=${prefix}
+libdir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib
+includedir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/include
+
+Name: libavformat
+Description: FFmpeg container format library
+Version: 62.3.100
+Requires: libavcodec >= 62.11.100, libswresample >= 6.1.100, libavutil >= 60.8.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavformat -lm -latomic -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lz -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lssl -lcrypto -lz -ldl -pthread -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lsrt -lstdc++ -lm -lgcc_s -lgcc -lc -lgcc_s -lgcc -lssl -lcrypto -lz -ldl -pthread
+Libs.private: 
+Cflags: -I${includedir}

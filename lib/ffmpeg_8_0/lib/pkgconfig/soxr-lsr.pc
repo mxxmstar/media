@@ -1,0 +1,5 @@
+Name: soxr-lsr
+Description: High quality, one-dimensional sample-rate conversion library (with libsamplerate-like bindings)
+Version: 0.1.3
+Libs: -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lsoxr-lsr
+Cflags: -I/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/include

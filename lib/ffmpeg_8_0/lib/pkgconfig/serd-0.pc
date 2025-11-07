@@ -1,0 +1,9 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: Serd
+Description: Lightweight C library for working with RDF data
+Version: 0.32.2
+Libs: -L${libdir} -lserd-0 -lm
+Cflags: -I${includedir}/serd-0 -DSERD_STATIC

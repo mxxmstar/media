@@ -1,0 +1,10 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: Lilv
+Description: Library for hosting LV2 plugins
+Version: 0.24.16
+Requires: lv2 >=  1.18.2, serd-0 >=  0.30.9, sord-0 >=  0.16.9, sratom-0 >= 0.6.9
+Libs: -L${libdir} -llilv-0 -lm -ldl
+Cflags: -I${includedir}/lilv-0 -DLILV_STATIC

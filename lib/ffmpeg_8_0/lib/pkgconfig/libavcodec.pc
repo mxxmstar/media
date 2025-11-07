@@ -1,0 +1,14 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+exec_prefix=${prefix}
+libdir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib
+includedir=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/include
+
+Name: libavcodec
+Description: FFmpeg codec library
+Version: 62.11.100
+Requires: libswresample >= 6.1.100, libavutil >= 60.8.100
+Requires.private: 
+Conflicts:
+Libs: -L${libdir}  -lavcodec -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lvpx -lm -lpthread -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lvpx -lm -lpthread -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lvpx -lm -lpthread -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lvpx -lm -lpthread -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lwebpmux -lm -lwebp -lm -lsharpyuv -lm -pthread -lm -latomic -llzma -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -ldav1d -pthread -ldl -lopencore-amrwb -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lzvbi -lm -lpthread -lm -lpng -lz -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -laom -lm -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lfdk-aac -lm -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -ljxl -lm -lstdc++ -lhwy -lbrotlienc -lbrotlidec -lbrotlicommon -ljxl_cms -lm -lstdc++ -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -ljxl_threads -lm -lstdc++ -lm -lmp3lame -lm -lopencore-amrnb -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lopus -lm -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lSvtAv1Enc -lpthread -lm -ltheoraenc -ltheoradec -logg -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lvorbis -lm -logg -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lvorbisenc -lvorbis -lm -logg -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lwebp -lm -lsharpyuv -lm -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lx264 -lpthread -lm -ldl -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lx265 -lstdc++ -lm -lgcc_s -lgcc -lgcc_s -lgcc -lrt -ldl -lxvidcore -lglslang -lMachineIndependent -lGenericCodeGen -lSPVRemapper -lSPIRV -lSPIRV-Tools-opt -lSPIRV-Tools -lpthread -lstdc++ -lm -L/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace/lib -lz -L/usr/lib/x86_64-linux-gnu -lva
+Libs.private: 
+Cflags: -I${includedir}

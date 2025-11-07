@@ -1,0 +1,7 @@
+prefix=/home/ub22/mx/ffmpeg_static/ffmpeg-build-script/workspace
+includedir=${prefix}/include
+
+Name: OpenCL-Headers
+Description: Khronos OpenCL Headers
+Version: 3.0
+Cflags: -I${includedir}
