@@ -113,15 +113,15 @@ set(SYSTEM_LIBS ${SYSTEM_LIBS} CACHE INTERNAL "System libraries")
 set(RUNTIME_LIBRARY_PATHS "${RUNTIME_LIBRARY_PATHS}" CACHE INTERNAL "Runtime library paths")
 
 # 源文件
-add_executable(MyFFmpegApp src/main.cpp)
+add_executable(demo src/main.cpp)
 
 # 设置主程序输出路径
-set_target_properties(MyFFmpegApp PROPERTIES
+set_target_properties(demo PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin
 )
 # 设置运行时路径（仅动态编译需要）
 if(NOT USE_STATIC_LIBS)
-    set_target_properties(MyFFmpegApp PROPERTIES
+    set_target_properties(demo PROPERTIES
         BUILD_WITH_INSTALL_RPATH TRUE
         INSTALL_RPATH "${RUNTIME_LIBRARY_PATHS}"
         INSTALL_RPATH_USE_LINK_PATH TRUE
@@ -150,7 +150,7 @@ else()
 endif()
 
 # 链接 FFmpeg 静态库
-target_link_libraries(MyFFmpegApp 
+target_link_libraries(demo 
                         PRIVATE 
                         ${FFMPEG_LIBRARIES} ${FFMPEG_LDFLAGS_OTHER}
                         ${MANUAL_BOOST_LIBRARIES}

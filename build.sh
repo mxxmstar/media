@@ -22,6 +22,12 @@ elif [ "$1" = "clean" ]; then
     #清理构建树
     echo "=== Clean build tree ==="
     rm -rf "${BUILD_DIR}"
+
+    # 清理生成的可执行文件
+    echo "=== Clean generated executables ==="
+    rm -rf "${PROJ_DIR}/bin/demo"
+    rm -rf "${PROJ_DIR}/bin/test"
+
     echo "=== Clean build tree done ==="
     exit 0
 elif [[ "${1:0:3}" = "inc"* || "${1,,}" == "incremental"* ]]; then
