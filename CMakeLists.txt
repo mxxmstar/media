@@ -16,6 +16,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/lib)
 # 定义编译选项 USE_STATIC_LIBS，默认为 OFF (动态编译)
 option(USE_STATIC_LIBS "Use static libraries" OFF)
 
+
+# 添加编译定义解决 ffmpeg 宏问题
+add_definitions(-D__STDC_CONSTANT_MACROS)
 #ffmpeg库配置
 find_package(PkgConfig REQUIRED)
 
@@ -104,6 +107,19 @@ link_directories(${FFMPEG_ROOT}/lib
                 ${THIRD_PARTY_LIB_DIR}/json_1_9_6/lib
                 )
 
+# 添加头文件路径
+include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include/base)
+include_directories(${CMAKE_SOURCE_DIR}/include/log)
+include_directories(${CMAKE_SOURCE_DIR}/include/net)
+include_directories(${CMAKE_SOURCE_DIR}/include/media)
+include_directories(${CMAKE_SOURCE_DIR}/include/third_part)
+include_directories(${CMAKE_SOURCE_DIR}/include/utils)
+include_directories(${CMAKE_SOURCE_DIR}/include/ffmpeg)
+include_directories(${CMAKE_SOURCE_DIR}/include/queue)
+
+
+
 # 将变量设置为CACHE INTERNAL，这样子目录可以访问
 set(FFMPEG_LIBRARIES ${FFMPEG_LIBRARIES} CACHE INTERNAL "FFmpeg libraries")
 set(FFMPEG_LDFLAGS_OTHER ${FFMPEG_LDFLAGS_OTHER} CACHE INTERNAL "FFmpeg ld flags")
@@ -111,6 +127,15 @@ set(MANUAL_BOOST_LIBRARIES ${BOOST_LIBRARIES} CACHE INTERNAL "Manual Boost libra
 set(MANUAL_JSONCPP_LIBRARIES ${JSONCPP_LIBRARIES} CACHE INTERNAL "Manual JsonCpp libraries")
 set(SYSTEM_LIBS ${SYSTEM_LIBS} CACHE INTERNAL "System libraries")
 set(RUNTIME_LIBRARY_PATHS "${RUNTIME_LIBRARY_PATHS}" CACHE INTERNAL "Runtime library paths")
+
+
+# 添加.cpp文件目录
+file(GLOB BASE_SRC ${CMAKE_SOURCE_DIR}/src/base/*.cpp)
+file(GLOB FFMPEG_SRC ${CMAKE_SOURCE_DIR}/src/ffmpeg/*.cpp)
+# 创建静态库用于共享代码
+add_library(src_code STATIC ${FFMPEG_SRC}
+                            ${BASE_SRC}
+                            )
 
 # 源文件
 add_executable(demo src/main.cpp)
@@ -152,6 +177,7 @@ endif()
 # 链接 FFmpeg 静态库
 target_link_libraries(demo 
                         PRIVATE 
+                        src_code
                         ${FFMPEG_LIBRARIES} ${FFMPEG_LDFLAGS_OTHER}
                         ${MANUAL_BOOST_LIBRARIES}
                         ${MANUAL_JSONCPP_LIBRARIES}

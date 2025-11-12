@@ -30,6 +30,7 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
     # 链接和主程序相同的库
     target_link_libraries(${EXECUTABLE_NAME}
         PRIVATE 
+        src_code
         ${FFMPEG_LIBRARIES} ${FFMPEG_LDFLAGS_OTHER}
         ${MANUAL_BOOST_LIBRARIES}
         ${MANUAL_JSONCPP_LIBRARIES}

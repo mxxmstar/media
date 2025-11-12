@@ -72,6 +72,20 @@
         "streambuf": "cpp",
         "thread": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "csetjmp": "cpp",
+        "bitset": "cpp",
+        "cfenv": "cpp",
+        "charconv": "cpp",
+        "forward_list": "cpp",
+        "regex": "cpp",
+        "slist": "cpp",
+        "ranges": "cpp",
+        "scoped_allocator": "cpp",
+        "typeindex": "cpp",
+        "valarray": "cpp",
+        "*.inc": "cpp",
+        "*.hpp11": "cpp",
+        "queue": "cpp"
     }
 }
