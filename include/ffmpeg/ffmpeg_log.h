@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <memory>
 #include <queue>
@@ -52,6 +53,7 @@ public:
     virtual void Stop() = 0;
 };
 
+// 这里只实现管理一个日志器，多次注册的日志器会覆盖之前的日志器
 class LoggerManager {
 public:
     static LoggerManager& GetInstance() {
@@ -96,7 +98,7 @@ private:
 #define MLOG_TRACE(msg) LoggerManager::GetInstance().WriteLog(LogLevel::Trace, msg, __FILE__, __FUNCTION__, __LINE__)
 #define MLOG_DEBUG(msg) LoggerManager::GetInstance().WriteLog(LogLevel::Debug, msg, __FILE__, __FUNCTION__, __LINE__)
 #define MLOG_INFO(msg)  LoggerManager::GetInstance().WriteLog(LogLevel::Info,  msg, __FILE__, __FUNCTION__, __LINE__)
-#define MLOG_WARN(msg)  LoggerManager::GetInstance().WriteLog(LogLevel::Warn,  msg, __FILE__, __FUNCTION__, __LINE__)
+#define MLOG_WARN(msg)  LoggerManager::GetInstance().WriteLog(LogLevel::Warning,  msg, __FILE__, __FUNCTION__, __LINE__)
 #define MLOG_ERROR(msg) LoggerManager::GetInstance().WriteLog(LogLevel::Error, msg, __FILE__, __FUNCTION__, __LINE__)
 #define MLOG_FATAL(msg) LoggerManager::GetInstance().WriteLog(LogLevel::Fatal, msg, __FILE__, __FUNCTION__, __LINE__)
 

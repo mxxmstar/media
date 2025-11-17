@@ -1,0 +1,40 @@
+# http://editorconfig.org
+# EditorConfig帮助开发者在不同的编辑器和IDE之间保持一致的代码风格
+root = true
+
+# 通用配置，适用于所有文件
+[*]
+charset = utf-8                        # 文件编码使用UTF-8
+end_of_line = lf                       # 换行符使用LF (Unix风格)
+indent_size = 4                        # 缩进大小为4个空格
+indent_style = space                   # 使用空格而不是制表符进行缩进
+insert_final_newline = true            # 文件末尾插入新行
+max_line_length = 80                   # 每行最大长度为80个字符
+trim_trailing_whitespace = true        # 自动删除行尾空白字符
+
+# === C++ 源码 ===
+[*.{h,hpp,c,cpp,cc}]
+indent_size = 4
+
+# Markdown文件的特殊配置
+[*.md]
+max_line_length = 0                    # Markdown文件不限制行长度
+trim_trailing_whitespace = false       # 不删除Markdown文件的行尾空白字符
+
+# === 排除 lib/ 目录 ===
+[lib/**]
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+# === 👇 关键：排除 CMake 文件 ===
+[CMakeLists.txt]
+trim_trailing_whitespace = false
+insert_final_newline = true   # 可保留末尾换行（CMake 不敏感）
+
+[*.cmake]
+trim_trailing_whitespace = false
+insert_final_newline = true
+
+# 如果 cmake 子目录有特殊需求
+[cmake/**.cmake]
+trim_trailing_whitespace = false

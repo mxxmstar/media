@@ -14,8 +14,6 @@ extern "C" {
 
 namespace FFmpeg {
 
-
-
 class Packet;
 /// @brief 封装AVFormatContext
 class FormatContext {

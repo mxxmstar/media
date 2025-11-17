@@ -23,16 +23,6 @@ struct VideoCodecParams {
     int bit_rate = -1;      // 输出比特率（-1表示使用输入比特率）
 };
 
-struct AudioCodecParams {
-    AudioCodecParams(std::string c, int s, int ch, AVSampleFormat fmt, int64_t layout, int b)
-        : codec_name(c), sample_rate(s), channels(ch), sample_fmt(fmt), channel_layout(layout), bit_rate(b) {}
-    std::string codec_name; // 编码器名称
-    int sample_rate = -1;   // 输出采样率（-1表示使用输入采样率）
-    int channels = -1;      // 输出声道数（-1表示使用输入声道数）
-    AVSampleFormat sample_fmt = AV_SAMPLE_FMT_NONE; // 输出样本格式（AV_SAMPLE_FMT_NONE表示使用输入格式）
-    int64_t channel_layout = -1; // 输出声道布局（-1表示使用输入声道布局）
-    int bit_rate = -1;      // 输出比特率（-1表示使用输入比特率）
-};
 
 /// @brief 压缩后的 视频/音频 编码包
 class Packet {
@@ -229,8 +219,9 @@ public:
     /// @param codec_id 编/解码器ID
     /// @param is_decoder 是否为解码器 true:解码器 false:编码器
     /// @return 编/解码器，失败则抛异常
-    static const AVCodec* FindCodec(AVCodecID codec_id, bool is_decoder);
+    static const AVCodec* FindCodecById(AVCodecID codec_id, bool is_decoder);
 
+    static const AVCodec* FindCodecByName(const std::string& codec_name, bool is_decoder);
     /// @brief 设置编/解码器参数
     /// @param codec 编/解码器
     /// @param width 视频宽度
@@ -247,6 +238,18 @@ public:
     /// @param flags 编码标志
     static void SetVideoQualityCodecParameters(AVCodecContext* codec_ctx, int gop_size, int max_b_frames, int flags) noexcept;
     
+    /// @brief 设置音频质量参数，通过声道数设置默认声道布局
+    /// @param codec_ctx 编/解码器上下文
+    /// @param sample_rate 采样率
+    /// @param channels 声道数
+    /// @param sample_fmt 采样格式
+    /// @param bit_rate 码率
+    static void SetAudioCodecParameters(AVCodecContext* codec_ctx, int sample_rate, int channels, AVSampleFormat sample_fmt, int bit_rate) noexcept;
+    
+    /// @brief 设置音频质量参数
+    /// @param codec_ctx 编/解码器上下文
+    /// @param flags 编解码标志
+    static void SetAudioQualityCodecParameters(AVCodecContext* codec_ctx, int flags) noexcept;
     /// @brief 获取内部的AVCodecContext指针
     AVCodecContext* get() noexcept;
 
@@ -393,108 +396,6 @@ private:
 //         AVFormatContext* fmt_ctx, AVCodecContext* codec_ctx);
 // };
 
-
-/// @brief 解码器
-class VideoDecoder : protected CodecContext, protected FormatContext {
-
-public:
-    /// @brief 构造函数 创建解码器
-    /// @param url 视频文件路径
-    VideoDecoder(const std::string& url, bool is_hw = false, AVDictionary** options = nullptr);
-
-    /// @brief 析构函数
-    ~VideoDecoder() = default;
-
-    /// @brief 解码
-    FFmpegResult Decode(AVFrame* out_frame, int timeout = 0);
-
-    /// @brief 获取内部的AVCodecContext指针
-    AVCodecContext* get() noexcept;
-    AVCodecContext* raw() noexcept;
-
-    /// @brief 获取内部的AVCodecContext指针（常量版本）
-    const AVCodecContext* get() const noexcept;
-    const AVCodecContext* raw() const noexcept;
-
-    //TODO:添加硬件相关接口
-    // bool InitHWEncoder(AVHWDeviceType type);
-
-    /// @brief 获取视频的宽度
-    int width() const noexcept;
-    /// @brief 获取视频的高度
-    int height() const noexcept;
-    /// @brief 获取视频的像素格式
-    AVPixelFormat pix_fmt() const noexcept;
-    /// @brief 获取视频的帧率
-    double fps() const noexcept;
-    /// @brief 获取视频的时长（秒）
-    double duration() const noexcept;
-    /// @brief 获取视频流的索引
-    int stream_idx() const noexcept;
-    /// @brief 获取视频流的时间基
-    AVRational time_base() const noexcept;
-private:
-    FFmpeg::Stream stream_;
-};
-
-class VideoEncoder : protected CodecContext, protected FormatContext {
-public:
-    
-    /// @brief 构造函数 创建编码器
-    /// @param codec_name 编码器名称
-    /// @param width 视频宽度
-    /// @param height 视频高度
-    /// @param fps 视频帧率
-    /// @param pix_fmt 视频像素格式
-    /// @param bit_rate 视频码率
-    VideoEncoder(const std::string& codec_name, int width, int height, double fps, AVPixelFormat pix_fmt, int bit_rate, bool is_hw = false, AVDictionary** options = nullptr);
-    
-    /// @brief 构造函数 创建编码器
-    /// @param params 编码视频参数
-    VideoEncoder(const VideoCodecParams& params, bool is_hw = false, AVDictionary** options = nullptr);
-
-    ~VideoEncoder() = default;
-
-    /// @brief 获取内部的AVCodecContext指针
-    AVCodecContext* get() noexcept;
-    AVCodecContext* raw() noexcept;
-
-    /// @brief 获取内部的AVCodecContext指针（常量版本）
-    const AVCodecContext* get() const noexcept;
-    const AVCodecContext* raw() const noexcept;
-
-    FFmpegResult Encode(AVFrame* in_frame, AVPacket* out_pkt, int time_out = 0);
-
-    /// @brief 设置默认的编/解码参数
-    /// @param is_decoder 是否为解码器 true:解码器 false:编码器
-    /// @note  解码时从 AVStream 中获取参数，编码时手动设置默认编码参数
-    // void SetDefaultCodecParameters(AVStream* stream, bool is_decoder = true);
-    
-    // bool InitHWEncoder(AVHWDeviceType type);
-    FFmpegResult Flush(AVPacket* out_pkt);
-
-    /// @brief 获取视频的宽度
-    int width() const noexcept;
-    /// @brief 获取视频的高度
-    int height() const noexcept;
-    /// @brief 获取视频的像素格式
-    AVPixelFormat pix_fmt() const noexcept;
-    /// @brief 获取视频的帧率
-    double fps() const noexcept;
-    /// @brief  获取视频的码率
-    int bit_rate() const noexcept;
-    /// @brief 获取视频流的时间基
-    AVRational time_base() const noexcept;
-
-private:
-    int width_;
-    int height_;
-    double fps_;
-    AVPixelFormat pix_fmt_;
-    int bit_rate_;
-    int stream_idx_;
-    AVRational time_base_;
-};
 
 }
 

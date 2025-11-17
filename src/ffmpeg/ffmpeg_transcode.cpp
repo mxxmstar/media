@@ -1,4 +1,5 @@
 #include "ffmpeg_transcode.h"
+#include "ffmpeg_coder.h"
 #include <iostream>
 namespace FFmpeg {
 VideoTranscoder::VideoTranscoder(const std::string& in_url, const std::string& out_url, const VideoCodecParams& params, bool is_hw, AVDictionary** options) 

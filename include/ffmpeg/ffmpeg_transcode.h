@@ -1,7 +1,10 @@
 #include "ffmpeg_codec.h"
 #include "ffmpeg_swscale.h"
 namespace FFmpeg {
-
+class VideoDecoder;
+class VideoEncoder;
+class AudioDecoder;
+class AudioEncoder;
 class VideoTranscoder{ 
 public:
     /// @brief 创建一个视频转码器

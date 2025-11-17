@@ -3,6 +3,7 @@
 #include <ctime>
 #include <sstream>
 #include <cstring>
+#include <filesystem>   // C++ 17
 namespace FFmpeg {
 std::shared_ptr<ILog> LoggerManager::logger_ = nullptr;
 
@@ -99,6 +100,13 @@ const char* SimpleLogger::file_name_only(const char* path) {
 }
 
 void SimpleLogger::open_file() {
+    // 检查并创建目录
+    std::filesystem::path log_path(config_.file_path);
+    // 递归创建父目录
+    if (log_path.has_parent_path()) {
+        std::filesystem::create_directories(log_path.parent_path());
+    }
+
     log_file_.open(config_.file_path, std::ios::app);
     if (!log_file_.is_open()) {
         std::cerr << "Failed to open log file: " << config_.file_path << std::endl;

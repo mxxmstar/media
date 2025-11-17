@@ -5,3 +5,4 @@ lib/ffmpeg-7.0.2/bin/
 lib/ffmpeg-7.0.2/share/
 
 lib/FFmpeg-7.0.2/lib/*.a
+ffmpeg_log.txt

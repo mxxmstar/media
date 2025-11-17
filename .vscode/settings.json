@@ -86,6 +86,12 @@
         "valarray": "cpp",
         "*.inc": "cpp",
         "*.hpp11": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "cerrno": "cpp",
+        "cfloat": "cpp",
+        "climits": "cpp",
+        "execution": "cpp",
+        "stack": "cpp",
+        "version": "cpp"
     }
 }
