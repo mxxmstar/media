@@ -1,5 +1,5 @@
 #include "ffmpeg_transcode.h"
-#include "ffmpeg_coder.h"
+#include "ffmpeg_log.h"
 #include <iostream>
 namespace FFmpeg {
 VideoTranscoder::VideoTranscoder(const std::string& in_url, const std::string& out_url, const VideoCodecParams& params, bool is_hw, AVDictionary** options) 
@@ -178,4 +178,29 @@ FFmpegResult VideoTranscoder::Transcode() {
     }
     return FFmpegResult::TRUE;
 }
+
+AudioTranscoder::AudioTranscoder(const std::string& in_url, const std::string& out_url, const AudioCodecParams& params, bool is_hw, AVDictionary** options) 
+    : decoder_(std::make_unique<AudioDecoder>(in_url, is_hw, options)),
+      encoder_(std::make_unique<AudioEncoder>(params, is_hw, options)),
+      params_(params), in_url_(in_url), out_url_(out_url)
+{
+    if (!decoder_) {
+        throw std::runtime_error("decoder is null");
+    }
+    MLOG_INFO("Audio decoder init success.");
+    if (!encoder_) {
+        throw std::runtime_error("encoder is null");
+    }
+    MLOG_INFO("Audio encoder init success."); 
+    if (decoder_->sample_rate() != params.sample_rate || decoder_->channels() != params.channels || decoder_->sample_fmt() != params.sample_fmt) {
+        // cswr_ctx_ = std::make_unique<CSwrContext>(
+        //     decoder_->sample_rate(), decoder_->channels(), decoder_->sample_fmt(),
+        //     params.sample_rate, params.channels, params.sample_fmt);       
+        // 失败会抛异常
+    }
+    
+}
+
+
+
 }

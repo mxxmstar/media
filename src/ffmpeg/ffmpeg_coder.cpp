@@ -359,7 +359,7 @@ AudioDecoder::AudioDecoder(const std::string& url, bool is_hw, AVDictionary** op
 }
 
 FFmpegResult AudioDecoder::Decode(AVFrame* out_frame, int time_out) {
-
+    return FFmpegResult::TRUE;
 }
 
 AVCodecContext* AudioDecoder::get() noexcept {

@@ -4,6 +4,9 @@ extern "C" {
 #include "libswscale/swscale.h"
 #include "libavutil/frame.h"
 #include "libavutil/pixfmt.h"
+#include "libavutil/channel_layout.h"
+#include "libavutil/samplefmt.h"
+#include "libswresample/swresample.h"
 }
 
 #include <stdexcept>
@@ -94,16 +97,12 @@ public:
     std::vector<uint8_t> ScaleToPacked(AVFrame* src, int dstW, int dstH, AVPixelFormat dstFmt);
 
     /// @brief 获取源宽度
-    /// @return 源宽度
     int srcW() const noexcept { return srcW_; }
     /// @brief 获取源高度
-    /// @return 源高度
     int srcH() const noexcept { return srcH_; }
     /// @brief 获取目标宽度
-    /// @return 目标宽度
     int dstW() const noexcept { return dstW_; }
     /// @brief 获取目标高度
-    /// @return 目标高度
     int dstH() const noexcept { return dstH_; }
     
 protected:
@@ -115,5 +114,92 @@ protected:
     int dstH_ = 0;
     AVPixelFormat dstFormat_ = AV_PIX_FMT_NONE;
     
+};
+
+
+class CSwrContext { 
+public:
+    using AllocFunc = function_ref<uint8_t*(size_t size)>;
+    using FreeFunc = function_ref<void(uint8_t* ptr, size_t size)>;
+
+    /// @brief 构造函数
+    /// @param src_ch_layout 源通道布局
+    /// @param src_channels 源通道数
+    /// @param src_sample_fmt 源样本格式
+    /// @param src_sample_rate 源采样率
+    /// @param dst_ch_layout 目标通道布局
+    /// @param dst_channels 目标通道数
+    /// @param dst_sample_fmt 目标样本格式
+    /// @param dst_sample_rate 目标采样率
+    CSwrContext(const AVChannelLayout& src_ch_layout, int src_channels, enum AVSampleFormat src_sample_fmt, int src_sample_rate,
+                const AVChannelLayout& dst_ch_layout, int dst_channels, enum AVSampleFormat dst_sample_fmt, int dst_sample_rate);
+
+    ~CSwrContext();
+    CSwrContext(const CSwrContext&) = delete;
+    CSwrContext& operator=(const CSwrContext&) = delete;
+
+    CSwrContext(CSwrContext&& other) noexcept;
+    CSwrContext& operator=(CSwrContext&& other) noexcept;
+
+    /// @brief 重采样
+    /// @param src 源帧 
+    /// @param dst 目标帧
+    void Resample(const AVFrame* src, AVFrame* dst);
+
+    /// @brief 创建音频帧
+    /// @param sample_rate 采样率
+    /// @param nb_samples 采样数
+    /// @param ch_layout 声道布局
+    /// @param  sample_fmt 采样格式
+    /// @param align 对齐要求
+    /// @return 音频帧
+    static AVFrame* CreateFrame(int sample_rate, int nb_samples, const AVChannelLayout& ch_layout, 
+                                     enum AVSampleFormat sample_fmt, int align = 0);
+
+    /// @brief 创建自定义音频帧，自定义分配器场景可以使用
+    /// @param sample_rate 采样率
+    /// @param nb_samples 采样数
+    /// @param ch_layout 声道布局
+    /// @param sample_fmt 采样格式
+    /// @param alloc 分配函数
+    /// @param free_func 释放函数
+    /// @param align 对齐要求
+    /// @return 音频帧
+    static AVFrame* CreateFrameCustom(int sample_rate, int nb_samples, const AVChannelLayout& ch_layout,
+                                          enum AVSampleFormat sample_fmt, const AllocFunc& alloc, 
+                                          const FreeFunc& free_func, int align = 0);
+
+    /// @brief 将输入的AVFrame重采样并转换格式，打包为std::vector<uint8_t>
+    /// @param src 源帧
+    /// @param dst_sample_rate 目标采样率
+    /// @param dst_ch_layout 目标声道布局
+    /// @param dst_sample_fmt 目标采样格式
+    /// @return 重采样后的数据
+    std::vector<uint8_t> ResampleToPacked(AVFrame* src, int dst_sample_rate,
+                                                  const AVChannelLayout& dst_ch_layout,
+                                                  enum AVSampleFormat dst_sample_fmt);
+    /// @brief 获取源通道布局
+    const AVChannelLayout& src_ch_layout() const noexcept { return src_ch_layout_; }
+    /// @brief 获取源采样格式
+    enum AVSampleFormat src_sample_fmt() const noexcept { return src_sample_fmt_; }
+    /// @brief 获取源采样率
+    int src_sample_rate() const noexcept { return src_sample_rate_; }
+    /// @brief 获取目标声道布局
+    const AVChannelLayout& dst_ch_layout() const noexcept { return dst_ch_layout_; }
+    /// @brief 获取目标采样格式
+    enum AVSampleFormat dst_sample_fmt() const noexcept { return dst_sample_fmt_; }
+    /// @brief 获取目标采样率
+    int dst_sample_rate() const noexcept { return dst_sample_rate_; }
+
+private:
+    SwrContext* swr_ctx_ = nullptr;
+    AVChannelLayout src_ch_layout_;
+    int src_channels_ = 0;
+    enum AVSampleFormat src_sample_fmt_ = AV_SAMPLE_FMT_NONE;
+    int src_sample_rate_ = 0;
+    AVChannelLayout dst_ch_layout_;
+    int dst_channels_ = 0;
+    enum AVSampleFormat dst_sample_fmt_ = AV_SAMPLE_FMT_NONE;
+    int dst_sample_rate_ = 0;
 };
 }
