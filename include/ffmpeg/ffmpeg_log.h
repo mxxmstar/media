@@ -49,7 +49,7 @@ public:
     virtual void Init() = 0;
 
     virtual void WriteLog(LogLevel level, const std::string msg, const char* file, const char* func, int line) = 0;
-
+    virtual void WriteLogFormat(LogLevel level, const char* fmt, const char* file, const char* func, int line, ...) = 0;
     virtual void Stop() = 0;
 };
 
@@ -88,6 +88,8 @@ public:
     std::shared_ptr<ILog> GetLogger();
     void WriteLog(LogLevel level, const std::string msg, const char* file, const char* func, int line);
 
+    void WriteLogFormat(LogLevel level, const char* fmt, const char* file, const char* func, int line, ...);
+
 private:
     LoggerManager() = default;
     static std::shared_ptr<ILog> logger_;
@@ -101,6 +103,13 @@ private:
 #define MLOG_WARN(msg)  LoggerManager::GetInstance().WriteLog(LogLevel::Warning,  msg, __FILE__, __FUNCTION__, __LINE__)
 #define MLOG_ERROR(msg) LoggerManager::GetInstance().WriteLog(LogLevel::Error, msg, __FILE__, __FUNCTION__, __LINE__)
 #define MLOG_FATAL(msg) LoggerManager::GetInstance().WriteLog(LogLevel::Fatal, msg, __FILE__, __FUNCTION__, __LINE__)
+
+#define MLOG_TRACE_F(fmt, ...) LoggerManager::GetInstance().WriteLogFormat(LogLevel::Trace, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define MLOG_DEBUG_F(fmt, ...) LoggerManager::GetInstance().WriteLogFormat(LogLevel::Debug, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define MLOG_INFO_F(fmt, ...)  LoggerManager::GetInstance().WriteLogFormat(LogLevel::Info,  fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define MLOG_WARN_F(fmt, ...)  LoggerManager::GetInstance().WriteLogFormat(LogLevel::Warning,  fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define MLOG_ERROR_F(fmt, ...) LoggerManager::GetInstance().WriteLogFormat(LogLevel::Error, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define MLOG_FATAL_F(fmt, ...) LoggerManager::GetInstance().WriteLogFormat(LogLevel::Fatal, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 class SimpleLogger : public ILog {
 public:
@@ -124,6 +133,14 @@ public:
     /// @param func 函数名
     /// @param line 行号
     void WriteLog(LogLevel l, const std::string msg, const char* file, const char* func, int line) override;
+    
+    /// @brief 写入格式化日志
+    /// @param l 日志级别
+    /// @param fmt 日志格式
+    /// @param file 文件名
+    /// @param func 函数名
+    /// @param line 行号
+    void WriteLogFormat(LogLevel l, const char* fmt, const char* file, const char* func, int line, ...) override;
 
     /// @brief 停止日志器
     void Stop() override;
@@ -140,7 +157,12 @@ private:
     void check_rotation();
 
     void worker_loop();
-
+    
+    /// @brief 将可变参数格式化为字符串
+    /// @param fmt 格式字符串
+    /// @param args 可变参数
+    /// @return 格式化后的字符串
+    std::string format_string(const char* fmt, va_list args);
 private:
     LoggerConfig config_;
     std::ofstream log_file_;
@@ -160,6 +182,12 @@ private:
 #define LOG_ERROR(msg) SimpleLogger::GetInstance().WriteLog(LogLevel::Error, msg, __FILE__, __FUNCTION__, __LINE__)
 #define LOG_FATAL(msg) SimpleLogger::GetInstance().WriteLog(LogLevel::Fatal, msg, __FILE__, __FUNCTION__, __LINE__)
 
+#define LOG_TRACE_F(fmt, ...) SimpleLogger::GetInstance().WriteLogFormat(LogLevel::Trace, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_DEBUG_F(fmt, ...) SimpleLogger::GetInstance().WriteLogFormat(LogLevel::Debug, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_INFO_F(fmt, ...)  SimpleLogger::GetInstance().WriteLogFormat(LogLevel::Info,  fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_WARN_F(fmt, ...)  SimpleLogger::GetInstance().WriteLogFormat(LogLevel::Warning,  fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_ERROR_F(fmt, ...) SimpleLogger::GetInstance().WriteLogFormat(LogLevel::Error, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LOG_FATAL_F(fmt, ...) SimpleLogger::GetInstance().WriteLogFormat(LogLevel::Fatal, fmt, __FILE__, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 
 }

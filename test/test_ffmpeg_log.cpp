@@ -24,5 +24,6 @@ int main()
     ffmpeg.Init(true, "ffmpeg_log.txt", true);
     MLOG_DEBUG("hello world");
     MLOG_INFO("hello world");
+    MLOG_ERROR_F("hello world %d", 123);
     ffmpeg.Stop();
 }

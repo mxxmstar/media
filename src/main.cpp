@@ -66,8 +66,7 @@ int main() {
     logger.SetConfig(cfg);
     logger.Init();
 
-    LOG_DEBUG("hello world");
-    LOG_INFO("hello world");
+    
     
     // 程序结束前停止日志记录器
     logger.Stop();

@@ -4,6 +4,7 @@
 #include <sstream>
 #include <cstring>
 #include <filesystem>   // C++ 17
+#include <cstdarg>
 namespace FFmpeg {
 std::shared_ptr<ILog> LoggerManager::logger_ = nullptr;
 
@@ -28,6 +29,25 @@ void LoggerManager::WriteLog(LogLevel level, const std::string msg, const char* 
     }
 }
 
+void LoggerManager::WriteLogFormat(LogLevel level, const char* fmt, const char* file, const char* func, int line, ...) {
+    auto logger = LoggerManager::GetLogger();
+    if (logger) {
+        va_list args;
+        va_start(args, line);
+
+        va_list args_copy;
+        va_copy(args_copy, args);
+        int size = vsnprintf(nullptr, 0, fmt, args_copy);
+        va_end(args);
+
+        if (size > 0) {
+            std::string formatted_msg(size , '\0');
+            vsnprintf(&formatted_msg[0], size + 1, fmt, args);
+            logger->WriteLog(level, formatted_msg, file, func, line);
+        }
+        va_end(args);
+    }
+}
 void SimpleLogger::SetConfig(const LoggerConfig& cfg) {
     config_ = cfg;
 }
@@ -70,6 +90,16 @@ void SimpleLogger::WriteLog(LogLevel l, const std::string msg, const char* file,
     }
 }
 
+void SimpleLogger::WriteLogFormat(LogLevel l, const char* fmt, const char* file, const char* func, int line, ...) {
+    va_list args;
+    // 指向line后面的可变参数
+    va_start(args, line);
+    // 格式化可变参数
+    std::string formatted_msg = format_string(fmt, args);
+    // 是否可变参数列表
+    va_end(args);
+    WriteLog(l, formatted_msg, file, func, line);
+}
 void SimpleLogger::Stop() {
     if (config_.is_async) {
         {
@@ -163,6 +193,23 @@ void SimpleLogger::worker_loop() {
             lock.lock();
         }
     }
+}
+
+std::string SimpleLogger::format_string(const char* fmt, va_list args) {
+    va_list args_copy;
+    va_copy(args_copy, args);
+    // 不存储，直接计算可变参数的长度
+    int size = vsnprintf(nullptr, 0, fmt, args_copy);
+    va_end(args_copy);
+
+    if (size <= 0) {
+        return std::string(fmt);
+    }
+
+    std::string result(size, '\0');
+    // 将格式化后的字符串存到result中
+    vsnprintf(&result[0], size + 1, fmt, args);
+    return result;
 }
 
 }

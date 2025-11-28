@@ -33,6 +33,7 @@ using function_ref = std::function<F>;
 #endif
 
 namespace FFmpeg {
+/// @brief 视频缩放上下文
 class CSwsContext {
 public:
     using AllocFunc = function_ref<uint8_t*(size_t size)>;
@@ -123,16 +124,16 @@ public:
     using FreeFunc = function_ref<void(uint8_t* ptr, size_t size)>;
 
     /// @brief 构造函数
-    /// @param src_ch_layout 源通道布局
+    /// @param src_sample_rate 源采样率
     /// @param src_channels 源通道数
     /// @param src_sample_fmt 源样本格式
-    /// @param src_sample_rate 源采样率
-    /// @param dst_ch_layout 目标通道布局
+    /// @param src_ch_layout 源通道布局
+    /// @param dst_sample_rate 目标采样率
     /// @param dst_channels 目标通道数
     /// @param dst_sample_fmt 目标样本格式
-    /// @param dst_sample_rate 目标采样率
-    CSwrContext(const AVChannelLayout& src_ch_layout, int src_channels, enum AVSampleFormat src_sample_fmt, int src_sample_rate,
-                const AVChannelLayout& dst_ch_layout, int dst_channels, enum AVSampleFormat dst_sample_fmt, int dst_sample_rate);
+    /// @param dst_ch_layout 目标通道布局
+    CSwrContext(int src_sample_rate, int src_channels, enum AVSampleFormat src_sample_fmt, const AVChannelLayout& src_ch_layout, 
+                int dst_sample_rate, int dst_channels, enum AVSampleFormat dst_sample_fmt, const AVChannelLayout& dst_ch_layout);
 
     ~CSwrContext();
     CSwrContext(const CSwrContext&) = delete;

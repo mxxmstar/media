@@ -192,13 +192,56 @@ AudioTranscoder::AudioTranscoder(const std::string& in_url, const std::string& o
         throw std::runtime_error("encoder is null");
     }
     MLOG_INFO("Audio encoder init success."); 
-    if (decoder_->sample_rate() != params.sample_rate || decoder_->channels() != params.channels || decoder_->sample_fmt() != params.sample_fmt) {
-        // cswr_ctx_ = std::make_unique<CSwrContext>(
-        //     decoder_->sample_rate(), decoder_->channels(), decoder_->sample_fmt(),
-        //     params.sample_rate, params.channels, params.sample_fmt);       
+    if (decoder_->sample_rate() != params.sample_rate || decoder_->channels() != params.channels || decoder_->sample_fmt() != params.sample_fmt) {        
+        cswr_ctx_ = std::make_unique<CSwrContext>(
+            decoder_->sample_rate(), decoder_->channels(), decoder_->sample_fmt(), decoder_->channel_layout(),
+            params.sample_rate, params.channels, params.sample_fmt, params.channel_layout);               
         // 失败会抛异常
     }
+
+    MLOG_INFO("Audio swresample init success.");
+    fmt_ctx_ = std::make_unique<FormatContext>(FormatContext::CreateOutFmtCtx(out_url_, nullptr, options));
+    MLOG_INFO("FormatContext init success.");
     
+    std::cout << "Format context pointer: " << fmt_ctx_->get() << std::endl;
+    std::cout << "Output format: " << (fmt_ctx_->get()->oformat ? fmt_ctx_->get()->oformat->name : "null") << std::endl;
+
+    // 创建输出流
+    AVStream* out_stream = Stream::CreateStream(fmt_ctx_->get());
+    MLOG_INFO_F("Output stream created, index: %d", out_stream->index);
+    MLOG_INFO_F("Copying encoder parameters to stream...");
+    MLOG_INFO_F("Encoder context: %p", encoder_->get());
+    MLOG_INFO_F("Output stream: %p", out_stream);
+    // 拷贝编码器参数到输出流
+    int ret = avcodec_parameters_from_context(out_stream->codecpar, encoder_->get());
+    if(ret < 0) {
+        throw std::runtime_error("avcodec_parameters_from_context failed");
+    }
+    MLOG_INFO_F("FormatContext copy encoder params success");
+    // 记录输出流索引
+    stream_index_ = out_stream->index;
+    MLOG_INFO_F("Stream index set to: %d", stream_index_);
+    // 打开输出文件
+    MLOG_INFO_F("Opening output file...");
+    MLOG_INFO_F("Output format flags: %d", fmt_ctx_->get()->oformat->flags);
+    if (!(fmt_ctx_->raw()->oformat->flags & AVFMT_NOFILE)){
+        ret = avio_open(&fmt_ctx_->raw()->pb, out_url_.c_str(), AVIO_FLAG_WRITE);
+        if (ret < 0) {
+            throw std::runtime_error("avio_open failed");
+        }
+    } else {
+        MLOG_INFO("Output format does not require file opening.");
+    }
+    MLOG_INFO("FormatContext open success");
+    // 写文件头
+    ret = avformat_write_header(fmt_ctx_->get(), nullptr);
+    if(ret < 0) {
+        char errbuf[AV_ERROR_MAX_STRING_SIZE] = {0};
+        av_strerror(ret, errbuf, sizeof(errbuf));
+        MLOG_ERROR_F("avformat_write_header failed: %s", errbuf);
+        throw std::runtime_error("avformat_write_header failed");
+    }
+    MLOG_INFO("FormatContext write header success");
 }
 
 

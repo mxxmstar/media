@@ -158,8 +158,8 @@ std::vector<uint8_t> CSwsContext::ScaleToPacked(AVFrame* src, int dstW, int dstH
 
 
 /***********************************CSwrContext****************************************/
-CSwrContext::CSwrContext(const AVChannelLayout& src_ch_layout, int src_channels, enum AVSampleFormat src_sample_fmt, int src_sample_rate,
-    const AVChannelLayout& dst_ch_layout, int dst_channels, enum AVSampleFormat dst_sample_fmt, int dst_sample_rate)
+CSwrContext::CSwrContext(int src_sample_rate, int src_channels, enum AVSampleFormat src_sample_fmt, const AVChannelLayout& src_ch_layout, 
+                int dst_sample_rate, int dst_channels, enum AVSampleFormat dst_sample_fmt, const AVChannelLayout& dst_ch_layout)
     : src_channels_(src_channels), src_sample_fmt_(src_sample_fmt), src_sample_rate_(src_sample_rate),
     dst_channels_(dst_channels), dst_sample_fmt_(dst_sample_fmt), dst_sample_rate_(dst_sample_rate)
 {
@@ -251,7 +251,7 @@ void CSwrContext::Resample(const AVFrame* src, AVFrame* dst) {
     }
 }
 
-AVFrame* CreateFrame(int sample_rate, int nb_samples, const AVChannelLayout& ch_layout, enum AVSampleFormat sample_fmt, int align) {
+AVFrame* CSwrContext::CreateFrame(int sample_rate, int nb_samples, const AVChannelLayout& ch_layout, enum AVSampleFormat sample_fmt, int align) {
     auto frame = av_frame_alloc();
     if (!frame) {
         throw std::runtime_error("av_frame_alloc failed");
