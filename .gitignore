@@ -1,5 +1,6 @@
 #忽略build下的所有文件
 build/
+bin/test/
 lib/ffmpeg_8_0/bin/
 lib/ffmpeg-7.0.2/bin/
 lib/ffmpeg-7.0.2/share/
